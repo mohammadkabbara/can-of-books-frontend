@@ -5,13 +5,18 @@ import './BestBooks.css';
 
 class MyFavoriteBooks extends React.Component {
   render() {
+
     return(
-      <Jumbotron>
+      <div className="home">
+      <Jumbotron style={{height:'250px'}}>
+     
         <h1>My Favorite Books</h1>
         <p>
           This is a collection of my favorite books
         </p>
+        
       </Jumbotron>
+      </div>
     )
   }
 }
