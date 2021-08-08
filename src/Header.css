@@ -1,7 +1,26 @@
 a{
   color:#fff;
+ 
 }
 
 a:hover{
   color:darkgrey;
+}
+
+nav .navbar-brand {
+  padding: 10px;
+  margin: 10px;
+}
+button{
+  float: left;
+ margin-left: 65%;
+ background-color:#585170;
+ color: aliceblue;
+ padding: 7px;
+ width: 80px;
+ border-radius: 10px;
+}
+button:hover{
+  background-color: brown;
+
 }
