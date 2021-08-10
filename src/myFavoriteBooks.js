@@ -21,3 +21,13 @@ class MyFavoriteBooks extends React.Component {
 }
 
 export default MyFavoriteBooks;
+<Card className="bg-dark text-white">
+<Card.Img src={books.image} alt="Card image" />
+<Card.ImgOverlay>
+  <Card.Title>{books.name}</Card.Title>
+  <Card.Text>
+  {books.description}
+  </Card.Text>
+  <Card.Text>{books.status}</Card.Text>
+</Card.ImgOverlay>
+</Card>
