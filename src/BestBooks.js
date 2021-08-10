@@ -8,6 +8,7 @@ import axios from "axios";
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import Card from 'react-bootstrap/Card'
+import AddBooksForm from './FormAdd'
 
 
 
@@ -17,7 +18,11 @@ class MyFavoriteBooks extends React.Component {
 
     super(props);
     this.state = {
-      books: []
+      books: [],
+      bookName:'',
+      bookDescription:'',
+      imageBooks:''
+
     }
   }
 
@@ -38,7 +43,36 @@ class MyFavoriteBooks extends React.Component {
       console.log(data.data);
       
       }).catch(error => (error));
-    }
+
+
+
+      addBooks = (event) => {
+        event.preventDefault();
+        const bookName = event.target.name.value;
+        const bookDescription = event.target.description.value;
+        const imageBooks = event.target.img.value;
+    
+        const bookData = {
+          name: this.state.bookName,
+          description: this.state.bookDescription,
+          img: this.state.imageBooks,
+          UserModel : this.state.name,
+         
+        }
+        // console.log(bookData)
+        axios
+    .post(`http://localhost:3010 /addBook`, bookData)
+    .then( data => {
+      console.log(data.data);
+      this.setState({
+        books : data.data
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+}   
   render() {
     return(
       <>
