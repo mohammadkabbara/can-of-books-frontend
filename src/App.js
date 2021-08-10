@@ -5,6 +5,7 @@ import Login from './Login';
 import { withAuth0 } from '@auth0/auth0-react';
 import Profile from './Profile';
 import MyFavoriteBooks from'./BestBooks'
+import FormAdd from './FormAdd';
 
 
 import {
@@ -27,7 +28,7 @@ class App extends React.Component {
                 {/* TODO: if the user is logged in, render the `BestBooks` component, if they are not, render the `Login` component */}
 
                 {this.props.auth0.isAuthenticated ? <MyFavoriteBooks /> : <Login />}
-                
+                <FormAdd />
                
                 
               </Route>
