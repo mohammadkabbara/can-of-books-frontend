@@ -12,6 +12,7 @@ import AddBooksForm from './FormAdd'
 
 
 
+
 class MyFavoriteBooks extends React.Component {
 
   constructor (props) {
@@ -21,8 +22,9 @@ class MyFavoriteBooks extends React.Component {
       books: [],
       bookName:'',
       bookDescription:'',
-      imageBooks:''
-
+      bookStatus:'',
+      showFormModal: false,
+      server:process.env.REACT_APP_URL
     }
   }
 
@@ -34,49 +36,105 @@ class MyFavoriteBooks extends React.Component {
     
     axios.get(`http://localhost:3010/books?email=${user.email}`).then(data => {
       this.setState ({
-        
-        // books:dataResults.data[0].books
         books:data.data
       });
-      // console.log(data.data[0].books[0].title);
-      // console.log(dataResults.data[0].books.title);
       console.log(data.data);
       
       }).catch(error => (error));
+    } 
+// ///////////////////////
+//   updateBookName = (e) => this.setState({ bookName: e.target.value });
+//   updateBookDescription = (e) => this.setState({ bookDescription: e.target.value });
+//   updatebookStatus = (e) => this.setState({ bookStatus: e.target.value });
 
+//   /////////////////////////////
 
-
-      addBooks = (event) => {
-        event.preventDefault();
-        const bookName = event.target.name.value;
-        const bookDescription = event.target.description.value;
-        const imageBooks = event.target.img.value;
+  addBooks = async (event) => {
+    const { user } = this.props.auth0;
     
-        const bookData = {
-          name: this.state.bookName,
-          description: this.state.bookDescription,
-          img: this.state.imageBooks,
-          UserModel : this.state.name,
-         
-        }
-        // console.log(bookData)
-        axios
-    .post(`http://localhost:3010 /addBook`, bookData)
-    .then( data => {
-      console.log(data.data);
+    const bookName = event.target.name.value;
+    const bookDescription = event.target.description.value;
+    const bookStatus = event.target.status.value;
+
+    try {
+      const bodyData = {
+        bookName: this.state.bookName,
+        bookDescription: this.state.bookDescription,
+        bookStatus: this.state.bookStatus,
+        email: this.props.auth0.user.email
+      }
+      // console.log(bookStatus)
+      console.log( this.state.description)
+      const books = await axios.post(`${this.state.server}/addBooks`, bodyData);
+      console.log(books.data);
       this.setState({
-        books : data.data
-      })
-    })
-    .catch(err => {
-      console.log(err);
-    })
+        books: books.data
+      });
+      this.state.closeForm();
+
+    } catch (error) {
+      console.log(error);
+    }
   }
-}   
+
+  deleteBook = async (index) => {
+    // console.log(index);
+    const { user } = this.props.auth0;
+    const newArrayOfBooks = this.state.books.filter((books, idx) => {
+      return idx !== index;
+    });
+    console.log(newArrayOfBooks);
+    this.setState({
+      books: newArrayOfBooks
+    });
+    const query = {
+      email: user.email
+    }
+    await axios.delete(`${this.state.server}/books/${index}`, { params: query });
+  }
+  ///////////////////
+
+
+///////////////////
+
+  showForm = () => {
+    this.setState({
+      showFormModal: true,
+    });
+
+  }
+  closeForm = () => {
+    this.setState({
+      showFormModal: false,
+    });
+  }
+
+  /////////////////
+  
   render() {
     return(
       <>
       <Jumbotron>
+      <button onClick={this.showForm}>Add Books</button>
+      
+      {this.state.showFormModal &&
+            <>
+              <AddBooksForm
+                // getBookName={this.updateBookName}
+                // getBookDescription={this.updateBookDescription}
+                // getBookStatus={this.updatebookStatus}
+                ShowForm={this.state.showFormModal}
+                closeForm={this.closeForm}
+                addBooks={this.addBooks}
+               
+              />
+            </>
+
+            
+          }
+
+
+
         <h1>My Favorite Books</h1>
         <p>
           This is a collection of my favorite books
@@ -90,7 +148,7 @@ class MyFavoriteBooks extends React.Component {
           <div>
             {
               
-              this.state.books.map(books => {
+              this.state.books.map((books , index) => {
                 
                 <h1>My books! </h1>
                 return (
@@ -107,6 +165,7 @@ class MyFavoriteBooks extends React.Component {
   {books.description}
   </Card.Text>
   <Card.Text>{books.status}</Card.Text>
+  <button onClick={() => { this.deleteBook(index) }}>Delete</button>
 </Card.ImgOverlay>
 </Card>
                 
