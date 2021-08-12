@@ -9,7 +9,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import Card from 'react-bootstrap/Card'
 import AddBooksForm from './FormAdd'
-
+import Update from './Update'
 
 
 
@@ -24,7 +24,8 @@ class MyFavoriteBooks extends React.Component {
       bookDescription:'',
       bookStatus:'',
       showFormModal: false,
-      server:process.env.REACT_APP_URL
+      server:process.env.REACT_APP_URL,
+      showUpdateFormflag:''
     }
   }
 
@@ -93,9 +94,44 @@ class MyFavoriteBooks extends React.Component {
     await axios.delete(`${this.state.server}/books/${index}`, { params: query });
   }
   ///////////////////
+  showUpdateForm = (index) => {
+    // show the update form
+    this.setState({
+      showUpdateFormflag : true,
+      bookName : this.state.books[index].bookName,
+      bookDescription : this.state.books[index].bookDescription,
+      bookStatus : this.state.books[index].bookStatus,
+      idx : index
+    })
+    
+  }
 
 
 ///////////////////
+
+updateBook = (event) => {
+  // send req to the server
+  event.preventDefault();
+  const updatedBookData = {
+    // bookName = event.target.bookName.value,
+    bookDescription: event.target.bookDescription.value,
+    bookStatus:event.target.bookStatus.value,
+    UserModel: this.state.name
+  }
+  axios
+  .put(`${this.state.server}/updateBook/${this.state.idx}`,updatedBookData)
+  .then(data =>{
+    console.log(data.data);
+    this.setState({
+      // books : data.data
+    })
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
+
+////////////////////////
 
   showForm = () => {
     this.setState({
@@ -120,9 +156,7 @@ class MyFavoriteBooks extends React.Component {
       {this.state.showFormModal &&
             <>
               <AddBooksForm
-                // getBookName={this.updateBookName}
-                // getBookDescription={this.updateBookDescription}
-                // getBookStatus={this.updatebookStatus}
+            
                 ShowForm={this.state.showFormModal}
                 closeForm={this.closeForm}
                 addBooks={this.addBooks}
@@ -131,6 +165,14 @@ class MyFavoriteBooks extends React.Component {
             </>
 
             
+          }
+          { this.state.showUpdateFormflag && 
+            <Update
+            updateBook={this.updateBook}
+            bookName={this.state.bookName}
+            bookDescription={this.state.bookDescription}
+            bookStatus={this.state.bookStatus}
+          />
           }
 
 
@@ -166,6 +208,8 @@ class MyFavoriteBooks extends React.Component {
   </Card.Text>
   <Card.Text>{books.status}</Card.Text>
   <button onClick={() => { this.deleteBook(index) }}>Delete</button>
+  <button onClick={() => {this.showUpdateForm(index)}}>Update</button> 
+  
 </Card.ImgOverlay>
 </Card>
                 
